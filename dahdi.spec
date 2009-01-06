@@ -1,8 +1,8 @@
 %define _disable_ld_as_needed 1
 %define _disable_ld_no_undefined 1
 
-%define tools_version 2.1.0
-%define linux_version 2.1.0
+%define tools_version 2.1.0.2
+%define linux_version 2.1.0.3
 
 %define	progs dahdi_diag fxstest hdlcgen hdlcstress hdlctest hdlcverify patgen patlooptest pattest timertest
 
@@ -328,6 +328,8 @@ EOF
 rm -f %{buildroot}%{_sbindir}/sethdlc
 rm -rf %{buildroot}/usr/lib/hotplug/firmware
 rm -f drivers/dahdi/firmware/*.{bin,gz}
+rm -f %{buildroot}%{_libdir}/libtonezone.so.1.0
+rm -f %{buildroot}%{_libdir}/libtonezone.so.1
 
 %if %mdkversion < 200900
 %post -n %{libname} -p /sbin/ldconfig
