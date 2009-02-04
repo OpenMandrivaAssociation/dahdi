@@ -2,7 +2,7 @@
 %define _disable_ld_no_undefined 1
 
 %define tools_version 2.1.0.2
-%define linux_version 2.1.0.3
+%define linux_version 2.1.0.4
 
 %define	progs dahdi_diag fxstest hdlcgen hdlcstress hdlctest hdlcverify patgen patlooptest pattest timertest
 
@@ -13,7 +13,7 @@
 Summary:	Userspace tools and DAHDI kernel modules
 Name:		dahdi
 Version:	%{tools_version}
-Release:	%mkrel 1
+Release:	%mkrel 2
 Group:		System/Kernel and hardware
 License:	GPLv2 and LGPLv2
 URL:		http://www.asterisk.org/
