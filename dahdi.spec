@@ -13,7 +13,7 @@
 Summary:	Userspace tools and DAHDI kernel modules
 Name:		dahdi
 Version:	%{tools_version}
-Release:	%mkrel 2
+Release:	%mkrel 3
 Group:		System/Kernel and hardware
 License:	GPLv2 and LGPLv2
 URL:		http://www.asterisk.org/
@@ -23,6 +23,7 @@ Source10:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-o
 Source11:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-oct6114-128-1.05.01.tar.gz
 Source12:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-tc400m-MR6.12.tar.gz
 Source13:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-vpmadt032-1.07.tar.gz
+Source50:	wctc4xxp-base.c-2.6.29-compiling.c
 Patch0:		dahdi-tools-mdv.diff
 BuildRequires:	newt-devel
 BuildRequires:	libusb-devel
@@ -131,6 +132,7 @@ for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type 
 done
 
 %patch0 -p0
+cp %{SOURCE50} dahdi-linux-%{linux_version}/drivers/dahdi/wctc4xxp/base.c
 
 %{__perl} -pi -e 's/chkconfig:\s([0-9]+)\s([0-9]+)\s([0-9]+)/chkconfig: - \2 \3/' dahdi.init
 
@@ -410,19 +412,19 @@ rm -rf %{buildroot}
 %{_sbindir}/xpp_sync
 %{_datadir}/dahdi/xpp_fxloader
 %{_datadir}/dahdi/waitfor_xpds
-%{_mandir}/man8/dahdi_cfg.8.*
-%{_mandir}/man8/dahdi_genconf.8.*
-%{_mandir}/man8/dahdi_hardware.8.*
-%{_mandir}/man8/dahdi_monitor.8.*
-%{_mandir}/man8/dahdi_registration.8.*
-%{_mandir}/man8/dahdi_scan.8.*
-%{_mandir}/man8/dahdi_test.8.*
-%{_mandir}/man8/dahdi_tool.8.*
-%{_mandir}/man8/fpga_load.8.*
-%{_mandir}/man8/fxotune.8.*
-%{_mandir}/man8/lsdahdi.8.*
-%{_mandir}/man8/xpp_blink.8.*
-%{_mandir}/man8/xpp_sync.8.*
+%{_mandir}/man8/dahdi_cfg.8*
+%{_mandir}/man8/dahdi_genconf.8*
+%{_mandir}/man8/dahdi_hardware.8*
+%{_mandir}/man8/dahdi_monitor.8*
+%{_mandir}/man8/dahdi_registration.8*
+%{_mandir}/man8/dahdi_scan.8*
+%{_mandir}/man8/dahdi_test.8*
+%{_mandir}/man8/dahdi_tool.8*
+%{_mandir}/man8/fpga_load.8*
+%{_mandir}/man8/fxotune.8*
+%{_mandir}/man8/lsdahdi.8*
+%{_mandir}/man8/xpp_blink.8*
+%{_mandir}/man8/xpp_sync.8*
 
 %files -n %{libname}
 %defattr(-,root,root)
