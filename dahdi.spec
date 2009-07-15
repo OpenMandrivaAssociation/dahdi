@@ -1,8 +1,8 @@
 %define _disable_ld_as_needed 1
 %define _disable_ld_no_undefined 1
 
-%define tools_version 2.1.0.2
-%define linux_version 2.1.0.4
+%define tools_version 2.2.0
+%define linux_version 2.2.0.1
 
 %define	progs dahdi_diag fxstest hdlcgen hdlcstress hdlctest hdlcverify patgen patlooptest pattest timertest
 
@@ -13,7 +13,7 @@
 Summary:	Userspace tools and DAHDI kernel modules
 Name:		dahdi
 Version:	%{tools_version}
-Release:	%mkrel 3
+Release:	%mkrel 1
 Group:		System/Kernel and hardware
 License:	GPLv2 and LGPLv2
 URL:		http://www.asterisk.org/
@@ -130,8 +130,7 @@ find . -type f -perm 0444 -exec chmod 644 {} \;
 for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*`; do
     if [ -e "$i" ]; then rm -rf $i; fi >&/dev/null
 done
-
-%patch0 -p0
+%patch0 -p1
 cp %{SOURCE50} dahdi-linux-%{linux_version}/drivers/dahdi/wctc4xxp/base.c
 
 %{__perl} -pi -e 's/chkconfig:\s([0-9]+)\s([0-9]+)\s([0-9]+)/chkconfig: - \2 \3/' dahdi.init
@@ -378,6 +377,7 @@ rm -rf %{buildroot}
 %defattr(-,root,root,-)
 %doc README LICENSE LICENSE.LGPL
 %dir %{_sysconfdir}/dahdi
+%config(noreplace) %{_sysconfdir}/dahdi/genconf_parameters
 %config(noreplace) %{_sysconfdir}/dahdi/init.conf
 %config(noreplace) %{_sysconfdir}/dahdi/modules
 %config(noreplace) %{_sysconfdir}/dahdi/system.conf
@@ -386,6 +386,9 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/modprobe.d/dahdi
 %config(noreplace) %{_sysconfdir}/modprobe.d/dahdi.blacklist
 %{_initrddir}/dahdi
+%{_sbindir}/astribank_allow
+%{_sbindir}/astribank_hexload
+%{_sbindir}/astribank_tool
 %{_sbindir}/dahdi_cfg
 %{_sbindir}/dahdi_diag
 %{_sbindir}/dahdi_genconf
@@ -410,8 +413,17 @@ rm -rf %{buildroot}
 %{_sbindir}/timertest
 %{_sbindir}/xpp_blink
 %{_sbindir}/xpp_sync
+%{_datadir}/dahdi/FPGA_1161.hex
+%{_datadir}/dahdi/PIC_TYPE_1.hex
+%{_datadir}/dahdi/PIC_TYPE_2.hex
+%{_datadir}/dahdi/PIC_TYPE_3.hex
+%{_datadir}/dahdi/PIC_TYPE_4.hex
+%{_datadir}/dahdi/astribank_hook
 %{_datadir}/dahdi/xpp_fxloader
 %{_datadir}/dahdi/waitfor_xpds
+%{_mandir}/man8/astribank_allow.8*
+%{_mandir}/man8/astribank_hexload.8*
+%{_mandir}/man8/astribank_tool.8*
 %{_mandir}/man8/dahdi_cfg.8*
 %{_mandir}/man8/dahdi_genconf.8*
 %{_mandir}/man8/dahdi_hardware.8*
