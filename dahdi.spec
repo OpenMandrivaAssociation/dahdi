@@ -149,7 +149,8 @@ popd
     --disable-static \
     --with-dahdi=`pwd` \
     --with-newt=%{_prefix} \
-    --with-usb=%{_prefix}
+    --with-usb=%{_prefix} \
+    --without-selinux
 
 %make
 
