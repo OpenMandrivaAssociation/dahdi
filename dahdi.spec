@@ -2,7 +2,7 @@
 %define _disable_ld_no_undefined 1
 
 %define tools_version 2.2.0
-%define linux_version 2.2.0.1
+%define linux_version 2.2.0.2
 
 %define	progs dahdi_diag fxstest hdlcgen hdlcstress hdlctest hdlcverify patgen patlooptest pattest timertest
 
@@ -25,6 +25,7 @@ Source12:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-t
 Source13:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-vpmadt032-1.07.tar.gz
 Source50:	wctc4xxp-base.c-2.6.29-compiling.c
 Patch0:		dahdi-tools-mdv.diff
+Patch1:		dahdi-genudevrules-2.2.0.1.diff
 BuildRequires:	newt-devel
 BuildRequires:	libusb-devel
 BuildConflicts:	libtonezone-devel
@@ -130,7 +131,10 @@ find . -type f -perm 0444 -exec chmod 644 {} \;
 for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*`; do
     if [ -e "$i" ]; then rm -rf $i; fi >&/dev/null
 done
-%patch0 -p1
+%patch0 -p1 -b .mdv
+pushd dahdi-linux-%{linux_version}
+%patch1 -p0 -b .udevrules
+popd
 cp %{SOURCE50} dahdi-linux-%{linux_version}/drivers/dahdi/wctc4xxp/base.c
 
 %{__perl} -pi -e 's/chkconfig:\s([0-9]+)\s([0-9]+)\s([0-9]+)/chkconfig: - \2 \3/' dahdi.init
