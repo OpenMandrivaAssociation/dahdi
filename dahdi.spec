@@ -3,7 +3,7 @@
 
 %define tools_version 2.2.0
 %define linux_version 2.2.0.2
-%define	release	2
+%define	release	3
 
 %define	progs dahdi_diag fxstest hdlcgen hdlcstress hdlctest hdlcverify patgen patlooptest pattest timertest
 
@@ -23,10 +23,10 @@ Source1:	http://downloads.digium.com/pub/telephony/dahdi-linux/dahdi-linux-%{lin
 Source10:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-oct6114-064-1.05.01.tar.gz
 Source11:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-oct6114-128-1.05.01.tar.gz
 Source12:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-tc400m-MR6.12.tar.gz
-Source13:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-vpmadt032-1.07.tar.gz
-Source50:	wctc4xxp-base.c-2.6.29-compiling.c
+Source13:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fwload-vpmadt032-1.17.0.tar.gz
 Patch0:		dahdi-tools-mdv.diff
 Patch1:		dahdi-genudevrules-2.2.0.1.diff
+Patch2:		dahdi-fix-compile-2.6.31.patch
 BuildRequires:	newt-devel
 BuildRequires:	libusb-devel
 BuildConflicts:	libtonezone-devel
@@ -136,7 +136,9 @@ done
 pushd dahdi-linux-%{linux_version}
 %patch1 -p0 -b .udevrules
 popd
-cp %{SOURCE50} dahdi-linux-%{linux_version}/drivers/dahdi/wctc4xxp/base.c
+pushd dahdi-linux-%{linux_version}/drivers/dahdi/wctc4xxp/
+%patch2 -p0 
+popd 
 
 %{__perl} -pi -e 's/chkconfig:\s([0-9]+)\s([0-9]+)\s([0-9]+)/chkconfig: - \2 \3/' dahdi.init
 
@@ -170,6 +172,10 @@ install -d %{buildroot}%{_initrddir}
 install -d %{buildroot}%{buildroot}%{_includedir}
 
 make install config DESTDIR=%{buildroot} PERLLIBDIR=%{perl_vendorlib}
+
+#pushd dahdi-linux-%{linux_version}/drivers/dahdi/firmware/
+#	make hotplug-install DESTDIR=%{buildroot}
+#popd
 
 for prog in %progs; do
     install -m0755 $prog %{buildroot}%{_sbindir}/
