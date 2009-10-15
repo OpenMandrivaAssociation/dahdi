@@ -3,7 +3,7 @@
 
 %define tools_version 2.2.0
 %define linux_version 2.2.0.2
-%define	release	3
+%define	release	4
 
 %define	progs dahdi_diag fxstest hdlcgen hdlcstress hdlctest hdlcverify patgen patlooptest pattest timertest
 
@@ -102,7 +102,8 @@ Requires(pre): rpm-helper
 Requires(postun): rpm-helper
 Requires(post): rpm-helper
 Requires(preun): rpm-helper
-Requires:	dkms
+Requires(post):	dkms
+Requires(preun):	dkms
 Requires:	dahdi-tools >= %{tools_version}
 Requires:	sethdlc >= 1.15
 Provides:	dkms-zaptel = %{linux_version}-%{release}
@@ -353,23 +354,15 @@ rm -f %{buildroot}%{_libdir}/libtonezone.so.1
 %endif
 
 %pre tools
-%{_sbindir}/groupadd -r dahdi &>/dev/null || :
-%{_sbindir}/useradd  -r -s /sbin/nologin -d /usr/share/dahdi -M \
-    -c 'DAHDI User' -g dahdi dahdi &>/dev/null || :
+%_pre_useradd dahdi /usr/share/dahdi /sbin/nologin
 
-%post tools
-/sbin/chkconfig --add dahdi
-
-%preun tools
-if [ "$1" -eq "0" ]; then
-    /sbin/service dahdi stop > /dev/null 2>&1 || :
-    /sbin/chkconfig --del dahdi
-fi
+%postun tools
+%_postun_userdel dahdi
 
 %post -n dkms-dahdi
-dkms add -m	dahdi -v %{linux_version}-%{release} --rpm_safe_upgrade
-dkms build -m	dahdi -v %{linux_version}-%{release} --rpm_safe_upgrade
-dkms install -m	dahdi -v %{linux_version}-%{release} --rpm_safe_upgrade --force
+dkms add	-m dahdi -v %{linux_version}-%{release} --rpm_safe_upgrade &&
+dkms build	-m dahdi -v %{linux_version}-%{release} --rpm_safe_upgrade &&
+dkms install	-m dahdi -v %{linux_version}-%{release} --rpm_safe_upgrade --force
 %_post_service dahdi
 
 %preun -n dkms-dahdi
