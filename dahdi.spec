@@ -1,9 +1,13 @@
 %define _disable_ld_as_needed 1
 %define _disable_ld_no_undefined 1
 
-%define tools_version 2.2.0
-%define linux_version 2.2.0.2
-%define	release	4
+%define tools_version	2.2.1
+%define linux_version	2.2.1
+%define	beta_tools	rc2
+%define	release_tools	%{?beta_tools:0.%{beta_tools}.}1
+%define	beta_linux	rc2
+%define	release_linux	%{?beta_linux:0.%{beta_linux}.}1
+%define	release		%mkrel %{release_tools}
 
 %define	progs dahdi_diag fxstest hdlcgen hdlcstress hdlctest hdlcverify patgen patlooptest pattest timertest
 
@@ -14,21 +18,22 @@
 Summary:	Userspace tools and DAHDI kernel modules
 Name:		dahdi
 Version:	%{tools_version}
-Release:	%mkrel %{release}
+Release:	%{release}
 Group:		System/Kernel and hardware
 License:	GPLv2 and LGPLv2
 URL:		http://www.asterisk.org/
-Source0:	http://downloads.digium.com/pub/telephony/dahdi-tools/dahdi-tools-%{tools_version}.tar.gz
-Source1:	http://downloads.digium.com/pub/telephony/dahdi-linux/dahdi-linux-%{linux_version}.tar.gz
+Source0:	http://downloads.digium.com/pub/telephony/dahdi-tools/dahdi-tools-%{tools_version}%{?beta_tools:-%{beta_tools}}.tar.gz
+Source1:	http://downloads.digium.com/pub/telephony/dahdi-linux/dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}.tar.gz
 Source10:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-oct6114-064-1.05.01.tar.gz
 Source11:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-oct6114-128-1.05.01.tar.gz
 Source12:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-tc400m-MR6.12.tar.gz
-Source13:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fwload-vpmadt032-1.17.0.tar.gz
+Source13:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fwload-vpmadt032-1.20.0.tar.gz
 Patch0:		dahdi-tools-mdv.diff
 Patch1:		dahdi-genudevrules-2.2.0.1.diff
-Patch2:		dahdi-fix-compile-2.6.31.patch
+#Patch2:		dahdi-fix-compile-2.6.31.patch
 BuildRequires:	newt-devel
 BuildRequires:	libusb-devel
+BuildRequires:	ppp-devel
 BuildConflicts:	libtonezone-devel
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
@@ -56,7 +61,7 @@ The DAHDI Telephony Interface drivers is contained in the kernel-dahdi
 
 %package -n	%{libname}
 Summary:	The shared DAHDI Library
-Group:          System/Libraries
+Group:		System/Libraries
 
 %description -n	%{libname}
 DAHDI stands for Digium Asterisk Hardware Device Interface. This package
@@ -85,7 +90,7 @@ DAHDI.
 
 %package -n	perl-Dahdi
 Summary:	Interface to Dahdi information
-Group:          Development/Perl
+Group:		Development/Perl
 
 %description -n	perl-Dahdi
 DAHDI stands for Digium Asterisk Hardware Device Interface. This package
@@ -117,12 +122,12 @@ userspace tools see the package dahdi-tools.
 
 %prep
 
-%setup -q -n dahdi-tools-%{tools_version} -a1
-ln -s dahdi-linux-%{linux_version}/include include
+%setup -q -n dahdi-tools-%{tools_version}%{?beta_tools:-%{beta_tools}} -a1
+ln -s dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/include include
 
 for i in %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13}; do
-    cp -a $i dahdi-linux-%{linux_version}/drivers/dahdi/firmware/
-    tar -C dahdi-linux-%{linux_version}/drivers/dahdi/firmware -zpxf $i
+    cp -a $i dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/drivers/dahdi/firmware/
+    tar -C dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/drivers/dahdi/firmware -zpxf $i
 done
 
 find . -type d -perm 0700 -exec chmod 755 {} \;
@@ -134,11 +139,11 @@ for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type 
     if [ -e "$i" ]; then rm -rf $i; fi >&/dev/null
 done
 %patch0 -p1 -b .mdv
-pushd dahdi-linux-%{linux_version}
+pushd dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}
 %patch1 -p0 -b .udevrules
 popd
-pushd dahdi-linux-%{linux_version}/drivers/dahdi/wctc4xxp/
-%patch2 -p0 
+pushd dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/drivers/dahdi/wctc4xxp/
+#%patch2 -p0 
 popd 
 
 %{__perl} -pi -e 's/chkconfig:\s([0-9]+)\s([0-9]+)\s([0-9]+)/chkconfig: - \2 \3/' dahdi.init
@@ -154,11 +159,17 @@ pushd menuselect
 popd
 
 %configure2_5x \
-    --disable-static \
-    --with-dahdi=`pwd` \
-    --with-newt=%{_prefix} \
-    --with-usb=%{_prefix} \
-    --without-selinux
+	--disable-static \
+	--with-dahdi=`pwd` \
+	--with-newt=%{_prefix} \
+	--with-usb=%{_prefix} \
+	--without-selinux \
+	--with-ppp=%{_prefix}
+
+cat >> menuselect.makeopts <<EOF
+MENUSELECT_UTILS=
+MENUSELECT_BUILD_DEPS=
+EOF
 
 %make
 
@@ -174,7 +185,7 @@ install -d %{buildroot}%{buildroot}%{_includedir}
 
 make install config DESTDIR=%{buildroot} PERLLIBDIR=%{perl_vendorlib}
 
-#pushd dahdi-linux-%{linux_version}/drivers/dahdi/firmware/
+#pushd dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/drivers/dahdi/firmware/
 #	make hotplug-install DESTDIR=%{buildroot}
 #popd
 
@@ -189,16 +200,16 @@ find %{buildroot} -name '*.a' -exec rm -f {} ';'
 
 ln -sf ../../..%{_datadir}/dahdi/xpp_fxloader %{buildroot}%{_sysconfdir}/hotplug/usb/xpp_fxloader
 
-pushd dahdi-linux-%{linux_version}
+pushd dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}
     make DESTDIR=%{buildroot} \
 	install-xpp-firm \
 	install-firmware \
-        install-include \
-        install-devices \
-        HOTPLUG_FIRMWARE=yes \
-        DYNFS=yes \
-        UDEVRULES=yes \
-        DOWNLOAD=echo
+	install-include \
+	install-devices \
+	HOTPLUG_FIRMWARE=yes \
+	DYNFS=yes \
+	UDEVRULES=yes \
+	DOWNLOAD=echo
 popd
 
 for file in %{buildroot}/etc/udev/rules.d/*.rules; do
@@ -207,13 +218,13 @@ for file in %{buildroot}/etc/udev/rules.d/*.rules; do
 done
 
 install -d %{buildroot}/usr/src/dahdi-%{linux_version}-%{release}
-cp 	dahdi-linux-%{linux_version}/Makefile \
-	dahdi-linux-%{linux_version}/.version \
+cp	dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/Makefile \
+	dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/.version \
 	%{buildroot}/usr/src/dahdi-%{linux_version}-%{release}/
 
-cp -r	dahdi-linux-%{linux_version}/build_tools \
-	dahdi-linux-%{linux_version}/drivers \
-	dahdi-linux-%{linux_version}/include \
+cp -r	dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/build_tools \
+	dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/drivers \
+	dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/include \
 	%{buildroot}/usr/src/dahdi-%{linux_version}-%{release}/
 
 # Remove files that produce weird dependencies
@@ -380,7 +391,7 @@ rm -rf %{buildroot}
 
 %files tools
 %defattr(-,root,root,-)
-%doc README LICENSE LICENSE.LGPL
+%doc README UPGRADE.txt xpp/README.Astribank 
 %dir %{_sysconfdir}/dahdi
 %config(noreplace) %{_sysconfdir}/dahdi/genconf_parameters
 %config(noreplace) %{_sysconfdir}/dahdi/init.conf
@@ -393,6 +404,7 @@ rm -rf %{buildroot}
 %{_initrddir}/dahdi
 %{_sbindir}/astribank_allow
 %{_sbindir}/astribank_hexload
+%{_sbindir}/astribank_is_starting
 %{_sbindir}/astribank_tool
 %{_sbindir}/dahdi_cfg
 %{_sbindir}/dahdi_diag
@@ -416,6 +428,7 @@ rm -rf %{buildroot}
 %{_sbindir}/patlooptest
 %{_sbindir}/pattest
 %{_sbindir}/timertest
+%{_sbindir}/twinstar
 %{_sbindir}/xpp_blink
 %{_sbindir}/xpp_sync
 %{_datadir}/dahdi/FPGA_1161.hex
@@ -428,8 +441,10 @@ rm -rf %{buildroot}
 %{_datadir}/dahdi/waitfor_xpds
 %{_mandir}/man8/astribank_allow.8*
 %{_mandir}/man8/astribank_hexload.8*
+%{_mandir}/man8/astribank_is_starting.8*
 %{_mandir}/man8/astribank_tool.8*
 %{_mandir}/man8/dahdi_cfg.8*
+%{_mandir}/man8/dahdi_diag.8*
 %{_mandir}/man8/dahdi_genconf.8*
 %{_mandir}/man8/dahdi_hardware.8*
 %{_mandir}/man8/dahdi_monitor.8*
@@ -439,7 +454,9 @@ rm -rf %{buildroot}
 %{_mandir}/man8/dahdi_tool.8*
 %{_mandir}/man8/fpga_load.8*
 %{_mandir}/man8/fxotune.8*
+%{_mandir}/man8/fxstest.8*
 %{_mandir}/man8/lsdahdi.8*
+%{_mandir}/man8/twinstar.8*
 %{_mandir}/man8/xpp_blink.8*
 %{_mandir}/man8/xpp_sync.8*
 
@@ -461,9 +478,9 @@ rm -rf %{buildroot}
 
 %files -n dkms-dahdi
 %defattr(-,root,root)
-%doc dahdi-linux-%{linux_version}/ChangeLog
-%doc dahdi-linux-%{linux_version}/LICENSE*
-%doc dahdi-linux-%{linux_version}/README*
+%doc dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/ChangeLog
+%doc dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/README*
+%doc dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/UPGRADE.*
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/udev/rules.d/40-dahdi.rules
 %attr(0644,root,root) %config(noreplace) %{_sysconfdir}/udev/rules.d/40-xpp.rules
 /lib/firmware/dahdi*
