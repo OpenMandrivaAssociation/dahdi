@@ -4,7 +4,7 @@
 %define tools_version	2.2.1
 %define linux_version	2.2.1
 #define	beta_tools	rc2
-%define	release_tools	%{?beta_tools:0.%{beta_tools}.}1
+%define	release_tools	%{?beta_tools:0.%{beta_tools}.}2
 #define	beta_linux	rc2
 %define	release_linux	%{?beta_linux:0.%{beta_linux}.}1
 %define	release		%mkrel %{release_tools}
@@ -30,7 +30,7 @@ Source12:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-t
 Source13:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fwload-vpmadt032-1.20.0.tar.gz
 Patch0:		dahdi-tools-mdv.diff
 Patch1:		dahdi-genudevrules-2.2.0.1.diff
-#Patch2:		dahdi-fix-compile-2.6.31.patch
+Patch2:		dahdi-xpp-drivers-udev.diff
 BuildRequires:	newt-devel
 BuildRequires:	libusb-devel
 BuildRequires:	ppp-devel
@@ -142,9 +142,7 @@ done
 pushd dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}
 %patch1 -p0 -b .udevrules
 popd
-pushd dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/drivers/dahdi/wctc4xxp/
-#%patch2 -p0 
-popd 
+%patch2 -p0 -b .udev
 
 %{__perl} -pi -e 's/chkconfig:\s([0-9]+)\s([0-9]+)\s([0-9]+)/chkconfig: - \2 \3/' dahdi.init
 
