@@ -31,6 +31,7 @@ Source13:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fwlo
 Patch0:		dahdi-tools-mdv.diff
 Patch1:		dahdi-genudevrules-2.2.0.1.diff
 Patch2:		dahdi-xpp-drivers-udev.diff
+Patch3:		dahdi-to-kernel-2-6-33.diff
 BuildRequires:	newt-devel
 BuildRequires:	libusb-devel
 BuildRequires:	ppp-devel
@@ -143,6 +144,7 @@ pushd dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}
 %patch1 -p0 -b .udevrules
 %patch2 -p1 -b .udev
 popd
+%patch3 -p1 -b .kernel-2.6.33
 
 %{__perl} -pi -e 's/chkconfig:\s([0-9]+)\s([0-9]+)\s([0-9]+)/chkconfig: - \2 \3/' dahdi.init
 
