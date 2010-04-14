@@ -1,10 +1,10 @@
 %define _disable_ld_as_needed 1
 %define _disable_ld_no_undefined 1
 
-%define tools_version	2.2.1.1
-%define linux_version	2.2.1.1
+%define tools_version	2.3.0
+%define linux_version	2.3.0
 #define	beta_tools	rc2
-%define	release_tools	%{?beta_tools:0.%{beta_tools}.}2
+%define	release_tools	%{?beta_tools:0.%{beta_tools}.}1
 #define	beta_linux	rc2
 %define	release_linux	%{?beta_linux:0.%{beta_linux}.}1
 %define	release		%mkrel %{release_tools}
@@ -28,6 +28,7 @@ Source10:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-o
 Source11:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-oct6114-128-1.05.01.tar.gz
 Source12:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-tc400m-MR6.12.tar.gz
 Source13:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fwload-vpmadt032-1.20.0.tar.gz
+Source14:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-hx8-2.06.tar.gz
 Patch0:		dahdi-tools-mdv.diff
 Patch1:		dahdi-genudevrules-2.2.0.1.diff
 Patch2:		dahdi-xpp-drivers-udev.diff
@@ -126,7 +127,7 @@ userspace tools see the package dahdi-tools.
 %setup -q -n dahdi-tools-%{tools_version}%{?beta_tools:-%{beta_tools}} -a1
 ln -s dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/include include
 
-for i in %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13}; do
+for i in %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} %{SOURCE14}; do
     cp -a $i dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/drivers/dahdi/firmware/
     tar -C dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/drivers/dahdi/firmware -zpxf $i
 done
@@ -142,9 +143,9 @@ done
 %patch0 -p1 -b .mdv
 pushd dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}
 %patch1 -p0 -b .udevrules
-%patch2 -p1 -b .udev
+#%patch2 -p1 -b .udev
 popd
-%patch3 -p1 -b .kernel-2.6.33
+#%patch3 -p1 -b .kernel-2.6.33
 
 %{__perl} -pi -e 's/chkconfig:\s([0-9]+)\s([0-9]+)\s([0-9]+)/chkconfig: - \2 \3/' dahdi.init
 
@@ -399,8 +400,8 @@ rm -rf %{buildroot}
 %config(noreplace) %{_sysconfdir}/dahdi/system.conf
 %{_sysconfdir}/hotplug/usb/xpp_fxloader
 %config(noreplace) %{_sysconfdir}/hotplug/usb/xpp_fxloader.usermap
-%config(noreplace) %{_sysconfdir}/modprobe.d/dahdi
-%config(noreplace) %{_sysconfdir}/modprobe.d/dahdi.blacklist
+%config(noreplace) %{_sysconfdir}/modprobe.d/dahdi.blacklist.conf
+%config(noreplace) %{_sysconfdir}/modprobe.d/dahdi.conf
 %{_initrddir}/dahdi
 %{_sbindir}/astribank_allow
 %{_sbindir}/astribank_hexload
@@ -410,6 +411,7 @@ rm -rf %{buildroot}
 %{_sbindir}/dahdi_diag
 %{_sbindir}/dahdi_genconf
 %{_sbindir}/dahdi_hardware
+%{_sbindir}/dahdi_maint
 %{_sbindir}/dahdi_monitor
 %{_sbindir}/dahdi_registration
 %{_sbindir}/dahdi_scan
