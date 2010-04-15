@@ -4,7 +4,7 @@
 %define tools_version	2.3.0
 %define linux_version	2.3.0
 #define	beta_tools	rc2
-%define	release_tools	%{?beta_tools:0.%{beta_tools}.}1
+%define	release_tools	%{?beta_tools:0.%{beta_tools}.}2
 #define	beta_linux	rc2
 %define	release_linux	%{?beta_linux:0.%{beta_linux}.}1
 %define	release		%mkrel %{release_tools}
@@ -242,10 +242,6 @@ CLEAN="make KERNVER=\$kernelver clean DOWNLOAD=echo"
 BUILT_MODULE_NAME[0]="dahdi"
 BUILT_MODULE_LOCATION[0]="drivers/dahdi/"
 DEST_MODULE_LOCATION[0]="/kernel/drivers/telephony/dahdi"
-
-BUILT_MODULE_NAME[1]="dahdi_dummy"
-BUILT_MODULE_LOCATION[1]="drivers/dahdi/"
-DEST_MODULE_LOCATION[1]="/kernel/drivers/telephony/dahdi"
 
 BUILT_MODULE_NAME[2]="dahdi_dynamic"
 BUILT_MODULE_LOCATION[2]="drivers/dahdi/"
