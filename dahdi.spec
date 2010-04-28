@@ -4,7 +4,7 @@
 %define tools_version	2.3.0
 %define linux_version	2.3.0
 #define	beta_tools	rc2
-%define	release_tools	%{?beta_tools:0.%{beta_tools}.}2
+%define	release_tools	%{?beta_tools:0.%{beta_tools}.}3
 #define	beta_linux	rc2
 %define	release_linux	%{?beta_linux:0.%{beta_linux}.}1
 %define	release		%mkrel %{release_tools}
@@ -31,8 +31,6 @@ Source13:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fwlo
 Source14:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-hx8-2.06.tar.gz
 Patch0:		dahdi-tools-mdv.diff
 Patch1:		dahdi-genudevrules-2.2.0.1.diff
-Patch2:		dahdi-xpp-drivers-udev.diff
-Patch3:		dahdi-to-kernel-2-6-33.diff
 BuildRequires:	newt-devel
 BuildRequires:	libusb-devel
 BuildRequires:	ppp-devel
@@ -143,9 +141,7 @@ done
 %patch0 -p1 -b .mdv
 pushd dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}
 %patch1 -p0 -b .udevrules
-#%patch2 -p1 -b .udev
 popd
-#%patch3 -p1 -b .kernel-2.6.33
 
 %{__perl} -pi -e 's/chkconfig:\s([0-9]+)\s([0-9]+)\s([0-9]+)/chkconfig: - \2 \3/' dahdi.init
 
@@ -210,7 +206,8 @@ pushd dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}
 	HOTPLUG_FIRMWARE=yes \
 	DYNFS=yes \
 	UDEVRULES=yes \
-	DOWNLOAD=echo
+	DOWNLOAD=echo \
+	DAHDI_MODULES_EXTRA="cwain.o qozap.o ztgsm.o"
 popd
 
 for file in %{buildroot}/etc/udev/rules.d/*.rules; do
