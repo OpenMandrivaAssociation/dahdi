@@ -143,7 +143,7 @@ done
 %patch0 -p1 -b .mdv
 pushd dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}
 %patch1 -p0 -b .udevrules
-%patch2 -p2 -b .kernel2634
+#patch2 -p2 -b .kernel2634
 popd
 
 %{__perl} -pi -e 's/chkconfig:\s([0-9]+)\s([0-9]+)\s([0-9]+)/chkconfig: - \2 \3/' dahdi.init
