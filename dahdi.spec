@@ -1,11 +1,11 @@
 %define _disable_ld_as_needed 1
 %define _disable_ld_no_undefined 1
 
-%define tools_version	2.3.0
-%define linux_version	2.3.0.1
+%define tools_version	2.4.0
+%define linux_version	2.4.0
 #define	beta_tools	rc2
 # Modify this to "release"
-%define	release_tools	%{?beta_tools:0.%{beta_tools}.}5
+%define	release_tools	%{?beta_tools:0.%{beta_tools}.}4
 #define	beta_linux	rc2
 %define	release_linux	%{?beta_linux:0.%{beta_linux}.}1
 %define	release		%mkrel %{release_tools}
