@@ -2,10 +2,10 @@
 %define _disable_ld_no_undefined 1
 
 %define tools_version	2.4.1
-%define linux_version	2.4.1
+%define linux_version	2.4.1.1
 #define	beta_tools	rc2
 # Modify this to "release"
-%define	release_tools	%{?beta_tools:0.%{beta_tools}.}1
+%define	release_tools	%{?beta_tools:0.%{beta_tools}.}2
 #define	beta_linux	rc2
 %define	release_linux	%{?beta_linux:0.%{beta_linux}.}1
 %define	release		%mkrel %{release_tools}
@@ -23,8 +23,8 @@ Release:	%{release}
 Group:		System/Kernel and hardware
 License:	GPLv2 and LGPLv2
 URL:		http://www.asterisk.org/
-Source0:	http://downloads.digium.com/pub/telephony/dahdi-tools/%{?!beta:releases/}dahdi-tools-%{tools_version}%{?beta_tools:-%{beta_tools}}.tar.gz
-Source1:	http://downloads.digium.com/pub/telephony/dahdi-linux/%{?!beta:releases/}dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}.tar.gz
+Source0:	http://downloads.asterisk.org/pub/telephony/dahdi-tools/%{?!beta:releases/}dahdi-tools-%{tools_version}%{?beta_tools:-%{beta_tools}}.tar.gz
+Source1:	http://downloads.asterisk.org/pub/telephony/dahdi-linux/%{?!beta:releases/}dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}.tar.gz
 Source10:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-oct6114-064-1.05.01.tar.gz
 Source11:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-oct6114-128-1.05.01.tar.gz
 Source12:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-tc400m-MR6.12.tar.gz
@@ -32,7 +32,6 @@ Source13:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fwlo
 Source14:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-hx8-2.06.tar.gz
 Patch0:		dahdi-tools-mdv.diff
 Patch1:		dahdi-genudevrules-2.2.0.1.diff
-#Patch2:		dahdi-2.6.34.patch
 BuildRequires:	newt-devel
 BuildRequires:	libusb-devel
 BuildRequires:	ppp-devel
@@ -143,7 +142,6 @@ done
 %patch0 -p1 -b .mdv
 pushd dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}
 %patch1 -p0 -b .udevrules
-#patch2 -p2 -b .kernel2634
 popd
 
 %{__perl} -pi -e 's/chkconfig:\s([0-9]+)\s([0-9]+)\s([0-9]+)/chkconfig: - \2 \3/' dahdi.init
