@@ -5,7 +5,7 @@
 %define linux_version	2.4.1.2
 #define	beta_tools	rc2
 # Modify this to "release"
-%define	release_tools	%{?beta_tools:0.%{beta_tools}.}2
+%define	release_tools	%{?beta_tools:0.%{beta_tools}.}3
 #define	beta_linux	rc2
 %define	release_linux	%{?beta_linux:0.%{beta_linux}.}1
 %define	release		%mkrel %{release_tools}
