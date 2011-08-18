@@ -1,8 +1,8 @@
 %define _disable_ld_as_needed 1
 %define _disable_ld_no_undefined 1
 
-%define tools_version	2.4.1
-%define linux_version	2.4.1.2
+%define tools_version	2.5.0
+%define linux_version	2.5.0
 #define	beta_tools	rc2
 # Modify this to "release"
 %define	release_tools	%{?beta_tools:0.%{beta_tools}.}3
@@ -30,6 +30,7 @@ Source11:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-o
 Source12:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-tc400m-MR6.12.tar.gz
 Source13:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fwload-vpmadt032-1.25.0.tar.gz
 Source14:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-hx8-2.06.tar.gz
+Source15:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-vpmoct032-1.8.0.tar.gz
 Patch0:		dahdi-tools-mdv.diff
 Patch1:		dahdi-genudevrules-2.2.0.1.diff
 BuildRequires:	newt-devel
@@ -126,7 +127,7 @@ userspace tools see the package dahdi-tools.
 %setup -q -n dahdi-tools-%{tools_version}%{?beta_tools:-%{beta_tools}} -a1
 ln -s dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/include include
 
-for i in %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} %{SOURCE14}; do
+for i in %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} %{SOURCE14} %{SOURCE15}; do
     cp -a $i dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/drivers/dahdi/firmware/
     tar -C dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/drivers/dahdi/firmware -zpxf $i
 done
@@ -433,8 +434,8 @@ rm -rf %{buildroot}
 %{_datadir}/dahdi/PIC_TYPE_3.hex
 %{_datadir}/dahdi/PIC_TYPE_4.hex
 %{_datadir}/dahdi/astribank_hook
-%{_datadir}/dahdi/xpp_fxloader
 %{_datadir}/dahdi/waitfor_xpds
+%{_datadir}/dahdi/xpp_fxloader
 %{_mandir}/man8/astribank_allow.8*
 %{_mandir}/man8/astribank_hexload.8*
 %{_mandir}/man8/astribank_is_starting.8*
@@ -490,5 +491,6 @@ rm -rf %{buildroot}
 %{_datadir}/dahdi/init_card_2_30
 %{_datadir}/dahdi/init_card_3_30
 %{_datadir}/dahdi/init_card_4_30
+%{_datadir}/dahdi/init_card_5_30
 /usr/src/dahdi-%{linux_version}-%{release}
 
