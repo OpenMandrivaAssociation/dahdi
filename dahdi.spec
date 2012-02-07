@@ -446,6 +446,7 @@ rm -rf %{buildroot}
 %{_mandir}/man8/dahdi_diag.8*
 %{_mandir}/man8/dahdi_genconf.8*
 %{_mandir}/man8/dahdi_hardware.8*
+%{_mandir}/man8/dahdi_maint.8*
 %{_mandir}/man8/dahdi_monitor.8*
 %{_mandir}/man8/dahdi_registration.8*
 %{_mandir}/man8/dahdi_scan.8*
