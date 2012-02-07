@@ -1,8 +1,8 @@
 %define _disable_ld_as_needed 1
 %define _disable_ld_no_undefined 1
 
-%define tools_version	2.5.0.1
-%define linux_version	2.5.0.1
+%define tools_version	2.6.0
+%define linux_version	2.6.0
 #define	beta_tools	rc2
 # Modify this to "release"
 %define	release_tools	%{?beta_tools:0.%{beta_tools}.}1
