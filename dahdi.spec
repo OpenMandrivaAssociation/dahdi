@@ -129,7 +129,7 @@ userspace tools see the package dahdi-tools.
 %setup -q -n dahdi-tools-%{tools_version}%{?beta_tools:-%{beta_tools}} -a1
 ln -s dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/include include
 
-for i in %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} %{SOURCE14} %{SOURCE15} %{SOURCE16}; do
+for i in %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} %{SOURCE14} %{SOURCE15} %{SOURCE16} %{SOURCE17}; do
     cp -a $i dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/drivers/dahdi/firmware/
     tar -C dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/drivers/dahdi/firmware -zpxf $i
 done
