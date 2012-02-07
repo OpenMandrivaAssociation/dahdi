@@ -27,10 +27,11 @@ Source0:	http://downloads.asterisk.org/pub/telephony/dahdi-tools/%{?!beta:releas
 Source1:	http://downloads.asterisk.org/pub/telephony/dahdi-linux/%{?!beta:releases/}dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}.tar.gz
 Source10:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-oct6114-064-1.05.01.tar.gz
 Source11:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-oct6114-128-1.05.01.tar.gz
-Source12:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-tc400m-MR6.12.tar.gz
-Source13:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fwload-vpmadt032-1.25.0.tar.gz
-Source14:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-hx8-2.06.tar.gz
-Source15:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-vpmoct032-1.11.0.tar.gz
+Source12:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-oct6114-256-1.05.01.tar.gz
+Source13:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-tc400m-MR6.12.tar.gz
+Source14:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fwload-vpmadt032-1.25.0.tar.gz
+Source15:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-hx8-2.06.tar.gz
+Source16:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-vpmoct032-1.11.0.tar.gz
 Patch0:		dahdi-tools-mdv.diff
 Patch1:		dahdi-genudevrules-2.2.0.1.diff
 BuildRequires:	newt-devel
@@ -127,7 +128,7 @@ userspace tools see the package dahdi-tools.
 %setup -q -n dahdi-tools-%{tools_version}%{?beta_tools:-%{beta_tools}} -a1
 ln -s dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/include include
 
-for i in %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} %{SOURCE14} %{SOURCE15}; do
+for i in %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} %{SOURCE14} %{SOURCE15} %{SOURCE16}; do
     cp -a $i dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/drivers/dahdi/firmware/
     tar -C dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/drivers/dahdi/firmware -zpxf $i
 done
