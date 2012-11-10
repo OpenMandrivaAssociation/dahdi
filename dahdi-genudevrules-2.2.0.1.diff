@@ -1,0 +1,24 @@
+--- build_tools/genudevrules	2008-10-22 20:49:41.000000000 +0200
++++ build_tools/genudevrules	2009-09-29 09:33:19.000000000 +0200
+@@ -1,14 +1,17 @@
+ #!/bin/sh
+ 
+-ver=`udevinfo -V | cut -f3 -d" "`
++ver=`/sbin/udevinfo -V | cut -f3 -d" "`
+ 
+ if [ -z "${ver}" ]; then
+    # Not found - try udevadm
+-   ver=`udevadm info -V | cut -f3 -d" "`
++   ver=`/sbin/udevadm info -V | cut -f3 -d" "`
+ 
+    if [ -z "${ver}" ]; then
+-      # nobody has that old version, anyway.
+-      ver=54
++      ver=`/sbin/udevadm info -V`
++      if [ -z "${ver}" ]; then
++         # nobody has that old version, anyway.
++	 ver=54
++      fi
+    fi
+ fi
+ 
