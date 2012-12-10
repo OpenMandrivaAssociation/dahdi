@@ -1,0 +1,15 @@
+Index: dahdi-tools-2.6.1/xpp/oct612x/include/octdef.h
+===================================================================
+--- dahdi-tools-2.6.1.orig/xpp/oct612x/include/octdef.h
++++ dahdi-tools-2.6.1/xpp/oct612x/include/octdef.h
+@@ -93,6 +93,10 @@ extern "C" {
+ #define TRUE  (BOOL)1
+ #endif
+ 
++#ifndef NULL
++#define NULL  0
++#endif
++
+ /*--------------------------------------------------------------------------
+ 	DLL Import-Export
+ ----------------------------------------------------------------------------*/
