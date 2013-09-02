@@ -109,6 +109,7 @@ Requires(post):	dkms
 Requires(preun):	dkms
 Requires:	dahdi-tools >= %{tools_version}
 Requires:	sethdlc >= 1.15
+# non-free package
 Suggests:	dahdi-firmware >= %{linux_version}
 Provides:	dkms-zaptel = %{linux_version}-%{release}
 Obsoletes:	dkms-zaptel
