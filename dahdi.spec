@@ -1,14 +1,10 @@
-%define _disable_ld_as_needed 1
-%define _disable_ld_no_undefined 1
-
-%define tools_version	2.6.1
-%define linux_version	2.6.1
-#define	beta_tools	rc2
+%define tools_version	2.7.0
+%define linux_version	2.7.0
+%define rel 1
 # Modify this to "release"
-%define	release_tools	%{?beta_tools:0.%{beta_tools}.}2
+%define	release_tools	%{?beta_tools:0.%{beta_tools}.}%rel
 #define	beta_linux	rc2
-%define	release_linux	%{?beta_linux:0.%{beta_linux}.}2
-%define	release		%{release_tools}
+%define	release_linux	%{?beta_linux:0.%{beta_linux}.}%rel
 
 %define	progs dahdi_diag fxstest hdlcgen hdlcstress hdlctest hdlcverify patgen patlooptest pattest timertest
 
@@ -19,19 +15,29 @@
 Summary:	Userspace tools and DAHDI kernel modules
 Name:		dahdi
 Version:	%{tools_version}
-Release:	%{release}
+Release:	%mkrel %{release_tools}
 Group:		System/Kernel and hardware
 License:	GPLv2 and LGPLv2
 URL:		http://www.asterisk.org/
 Source0:	http://downloads.asterisk.org/pub/telephony/dahdi-tools/%{?!beta:releases/}dahdi-tools-%{tools_version}%{?beta_tools:-%{beta_tools}}.tar.gz
-# this is original tarball with stripped binary firmware
-Source1:	dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}.tar.xz
+Source1:	http://downloads.asterisk.org/pub/telephony/dahdi-linux/%{?!beta:releases/}dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}.tar.gz
+Source9:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-oct6114-032-1.05.01.tar.gz
+Source10:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-oct6114-064-1.05.01.tar.gz
+Source11:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-oct6114-128-1.05.01.tar.gz
+Source12:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-oct6114-256-1.05.01.tar.gz
+Source13:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-tc400m-MR6.12.tar.gz
+Source14:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fwload-vpmadt032-1.25.0.tar.gz
+Source15:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-hx8-2.06.tar.gz
+Source16:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-vpmoct032-1.12.0.tar.gz
+Source17:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-te133-6f0017.tar.gz
+Source18:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-te134-6f0017.tar.gz
+Source19:	http://downloads.digium.com/pub/telephony/firmware/releases/dahdi-fw-te820-1.76.tar.gz
+
 Patch0:		dahdi-tools-mdv.diff
 Patch1:		dahdi-genudevrules-2.2.0.1.diff
-Patch2:		dahdi-2.6.1-rosa-null.patch
-Patch3:		dahdi-2.6.1-rosa-no_blobs.patch
-BuildRequires:	pkgconfig(libnewt)
-BuildRequires:	pkgconfig(libusb)
+Patch2:		dahdi-gcc47.diff
+BuildRequires:	newt-devel
+BuildRequires:	pkgconfig(libusb-1.0)
 BuildRequires:	ppp-devel
 BuildConflicts:	libtonezone-devel
 
@@ -73,10 +79,10 @@ The DAHDI drivers is contained in the kernel-dahdi (or dkms) package.
 %package -n	%{develname}
 Summary:	Development files for the DAHDI Library
 Group:		Development/C
-Requires:	%{libname} = %{EVRD}
-Provides:	tonezone-devel = %{EVRD}
-Provides:	dahdi-devel = %{EVRD}
-Provides:	libtonezone-devel = %{EVRD}
+Requires:	%{libname} = %{version}-%{release}
+Provides:	tonezone-devel = %{version}-%{release}
+Provides:	dahdi-devel = %{version}-%{release}
+Provides:	libtonezone-devel = %{version}-%{release}
 
 %description -n	%{develname}
 DAHDI stands for Digium Asterisk Hardware Device Interface. This package
@@ -101,6 +107,7 @@ loaded Dahdi devices.
 %package -n	dkms-dahdi
 Summary:	Kernel drivers for the Digium Asterisk Hardware Device Interface (DAHDI)
 Group:		System/Kernel and hardware
+BuildArch:	noarch
 Requires(pre): rpm-helper
 Requires(postun): rpm-helper
 Requires(post): rpm-helper
@@ -109,8 +116,6 @@ Requires(post):	dkms
 Requires(preun):	dkms
 Requires:	dahdi-tools >= %{tools_version}
 Requires:	sethdlc >= 1.15
-# non-free package
-Suggests:	dahdi-firmware >= %{linux_version}
 Provides:	dkms-zaptel = %{linux_version}-%{release}
 Obsoletes:	dkms-zaptel
 
@@ -121,52 +126,43 @@ This package contains the kernel modules for DAHDI. For the required
 userspace tools see the package dahdi-tools.
 
 %prep
-
 %setup -q -n dahdi-tools-%{tools_version}%{?beta_tools:-%{beta_tools}} -a1
+
+%patch2 -p1
+
 ln -s dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/include include
+
+for i in %{SOURCE9} %{SOURCE10} %{SOURCE11} %{SOURCE12} %{SOURCE13} %{SOURCE14} %{SOURCE15} %{SOURCE16} %{SOURCE17} %{SOURCE18} %{SOURCE19}; do
+    cp -a $i dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/drivers/dahdi/firmware/
+    tar -C dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/drivers/dahdi/firmware -zpxf $i
+done
 
 find . -type d -perm 0700 -exec chmod 755 {} \;
 find . -type d -perm 0555 -exec chmod 755 {} \;
 find . -type f -perm 0555 -exec chmod 755 {} \;
 find . -type f -perm 0444 -exec chmod 644 {} \;
-		
+
 for i in `find . -type d -name CVS` `find . -type f -name .cvs\*` `find . -type f -name .#\*`; do
     if [ -e "$i" ]; then rm -rf $i; fi >&/dev/null
 done
 %patch0 -p1 -b .mdv
 pushd dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}
 %patch1 -p0 -b .udevrules
-%patch3 -p1
-popd
-%patch2 -p1
-pushd dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/drivers/dahdi
-%patch2 -p2
 popd
 
 %{__perl} -pi -e 's/chkconfig:\s([0-9]+)\s([0-9]+)\s([0-9]+)/chkconfig: - \2 \3/' dahdi.init
 
+
 %build
-
-pushd menuselect/mxml
-%configure2_5x
-popd
-
-pushd menuselect
-%configure2_5x
-popd
 
 %configure2_5x \
 	--disable-static \
 	--with-dahdi=`pwd` \
+	--enable-pinned \
 	--with-newt=%{_prefix} \
 	--with-usb=%{_prefix} \
 	--without-selinux \
 	--with-ppp=%{_prefix}
-
-cat >> menuselect.makeopts <<EOF
-MENUSELECT_UTILS=
-MENUSELECT_BUILD_DEPS=
-EOF
 
 %make
 
@@ -188,6 +184,8 @@ for prog in %progs; do
     install -m0755 $prog %{buildroot}%{_sbindir}/
 done
 
+install doc/dahdi_map.8 %{buildroot}%{_mandir}/man8/
+
 # fix one conflicting file with tetex
 mv %{buildroot}%{_sbindir}/patgen %{buildroot}%{_sbindir}/%{name}-patgen
 
@@ -197,9 +195,10 @@ ln -sf ../../..%{_datadir}/dahdi/xpp_fxloader %{buildroot}%{_sysconfdir}/hotplug
 
 pushd dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}
     make DESTDIR=%{buildroot} \
+	install-xpp-firm \
+	install-firmware \
 	install-include \
 	install-devices \
-	install-xpp-firm \
 	HOTPLUG_FIRMWARE=yes \
 	DYNFS=yes \
 	UDEVRULES=yes \
@@ -207,9 +206,9 @@ pushd dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}
 	DAHDI_MODULES_EXTRA="cwain.o qozap.o ztgsm.o"
 popd
 
-for file in %{buildroot}/etc/udev/rules.d/*.rules; do
+for file in %{buildroot}%{_sysconfdir}/udev/rules.d/*.rules; do
   name=`basename $file`
-  mv $file %{buildroot}/etc/udev/rules.d/40-$name
+  mv $file %{buildroot}%{_sysconfdir}/udev/rules.d/40-$name
 done
 
 install -d %{buildroot}/usr/src/dahdi-%{linux_version}-%{release}
@@ -370,11 +369,13 @@ dkms remove -m	dahdi -v %{linux_version}-%{release} --rpm_safe_upgrade --all
 %_postun_userdel asterisk
 
 %files tools
-%doc README UPGRADE.txt xpp/README.Astribank 
+%doc README UPGRADE.txt xpp/README.Astribank
 %dir %{_sysconfdir}/dahdi
 %config(noreplace) %{_sysconfdir}/dahdi/genconf_parameters
 %config(noreplace) %{_sysconfdir}/dahdi/init.conf
 %config(noreplace) %{_sysconfdir}/dahdi/modules
+%config(noreplace) %{_sysconfdir}/dahdi/pinned-spans.conf
+%config(noreplace) %{_sysconfdir}/dahdi/spantype.conf
 %config(noreplace) %{_sysconfdir}/dahdi/system.conf
 %{_sysconfdir}/hotplug/usb/xpp_fxloader
 %config(noreplace) %{_sysconfdir}/hotplug/usb/xpp_fxloader.usermap
@@ -390,14 +391,14 @@ dkms remove -m	dahdi -v %{linux_version}-%{release} --rpm_safe_upgrade --all
 %{_sbindir}/dahdi_genconf
 %{_sbindir}/dahdi_hardware
 %{_sbindir}/dahdi_maint
+%{_sbindir}/dahdi_map
 %{_sbindir}/dahdi_monitor
+%{_sbindir}/dahdi-patgen
 %{_sbindir}/dahdi_registration
 %{_sbindir}/dahdi_scan
 %{_sbindir}/dahdi_speed
 %{_sbindir}/dahdi_test
 %{_sbindir}/dahdi_tool
-%{_sbindir}/dahdi-patgen
-%{_sbindir}/fpga_load
 %{_sbindir}/fxotune
 %{_sbindir}/fxstest
 %{_sbindir}/hdlcgen
@@ -412,6 +413,15 @@ dkms remove -m	dahdi -v %{linux_version}-%{release} --rpm_safe_upgrade --all
 %{_sbindir}/xpp_blink
 %{_sbindir}/xpp_sync
 %{_datadir}/dahdi/astribank_hook
+%{_datadir}/dahdi/dahdi_cfg_device_args
+%{_datadir}/dahdi/FPGA_1161.hex
+%{_datadir}/dahdi/handle_device
+%{_datadir}/dahdi/PIC_TYPE_1.hex
+%{_datadir}/dahdi/PIC_TYPE_2.hex
+%{_datadir}/dahdi/PIC_TYPE_3.hex
+%{_datadir}/dahdi/PIC_TYPE_4.hex
+%{_datadir}/dahdi/span_assignments
+%{_datadir}/dahdi/span_types
 %{_datadir}/dahdi/waitfor_xpds
 %{_datadir}/dahdi/xpp_fxloader
 %{_mandir}/man8/astribank_allow.8*
@@ -419,25 +429,23 @@ dkms remove -m	dahdi -v %{linux_version}-%{release} --rpm_safe_upgrade --all
 %{_mandir}/man8/astribank_is_starting.8*
 %{_mandir}/man8/astribank_tool.8*
 %{_mandir}/man8/dahdi_cfg.8*
-%{_mandir}/man8/dahdi_diag.8*
 %{_mandir}/man8/dahdi_genconf.8*
 %{_mandir}/man8/dahdi_hardware.8*
+%{_mandir}/man8/dahdi_map.8*
 %{_mandir}/man8/dahdi_maint.8*
 %{_mandir}/man8/dahdi_monitor.8*
 %{_mandir}/man8/dahdi_registration.8*
 %{_mandir}/man8/dahdi_scan.8*
 %{_mandir}/man8/dahdi_test.8*
 %{_mandir}/man8/dahdi_tool.8*
-%{_mandir}/man8/fpga_load.8*
 %{_mandir}/man8/fxotune.8*
-%{_mandir}/man8/fxstest.8*
 %{_mandir}/man8/lsdahdi.8*
 %{_mandir}/man8/twinstar.8*
 %{_mandir}/man8/xpp_blink.8*
 %{_mandir}/man8/xpp_sync.8*
 
 %files -n %{libname}
-%doc ChangeLog README LICENSE LICENSE.LGPL
+%doc README LICENSE LICENSE.LGPL
 %{_libdir}/*.so.%{major}*
 
 %files -n %{develname}
@@ -450,11 +458,19 @@ dkms remove -m	dahdi -v %{linux_version}-%{release} --rpm_safe_upgrade --all
 %{perl_vendorlib}/Dahdi.pm
 
 %files -n dkms-dahdi
-%doc dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/ChangeLog
 %doc dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/README*
 %doc dahdi-linux-%{linux_version}%{?beta_linux:-%{beta_linux}}/UPGRADE.*
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/udev/rules.d/40-dahdi.rules
-%attr(0644,root,root) %config(noreplace) %{_sysconfdir}/udev/rules.d/40-xpp.rules
+%{_sysconfdir}/udev/rules.d/40-dahdi.rules
+%{_sysconfdir}/udev/rules.d/40-xpp.rules
+/lib/firmware/dahdi*
+/lib/firmware/.dahdi*
+%{_datadir}/dahdi/FPGA_1141.hex
+%{_datadir}/dahdi/FPGA_1151.hex
+%{_datadir}/dahdi/FPGA_1161.201.hex
+%{_datadir}/dahdi/FPGA_FXS.hex
+%{_datadir}/dahdi/USB_FW.201.hex
+%{_datadir}/dahdi/USB_FW.hex
+%{_datadir}/dahdi/USB_RECOV.hex
 %{_datadir}/dahdi/XppConfig.pm
 %{_datadir}/dahdi/init_card_1_30
 %{_datadir}/dahdi/init_card_2_30
@@ -462,130 +478,3 @@ dkms remove -m	dahdi -v %{linux_version}-%{release} --rpm_safe_upgrade --all
 %{_datadir}/dahdi/init_card_4_30
 %{_datadir}/dahdi/init_card_5_30
 /usr/src/dahdi-%{linux_version}-%{release}
-
-
-
-%changelog
-* Wed Feb 08 2012 Lonyai Gergely <aleph@mandriva.org> 2.6.0-1mdv2012.0
-+ Revision: 771706
-- Add dahdi_maint man page.
-- Add missing firmware
-- Add missing firmware
-- Add missing firmware
-- 2.6.0
-
-* Wed Sep 28 2011 Lonyai Gergely <aleph@mandriva.org> 2.5.0.1-1
-+ Revision: 701604
-- Change a firmware file
-- 2.5.0.1
-
-* Thu Aug 18 2011 Lonyai Gergely <aleph@mandriva.org> 2.5.0-3
-+ Revision: 695139
-- 2.5.0
-  Add a new card firmware
-- dahdi-linux-2.4.1.2
-
-  + Bogdano Arendartchuk <bogdano@mandriva.com>
-    - new release (from aleph | 2011-04-12 15:42:38 +0200)
-
-* Tue Apr 05 2011 Lonyai Gergely <aleph@mandriva.org> 2.4.1-2
-+ Revision: 650536
-- dahdi-linux-2.4.1.1
-
-* Fri Mar 04 2011 Lonyai Gergely <aleph@mandriva.org> 2.4.1-1
-+ Revision: 641576
-- 2.4.1
-
-* Mon Sep 13 2010 Lonyai Gergely <aleph@mandriva.org> 2.4.0-4mdv2011.0
-+ Revision: 577933
-- 2.4.0
-
-* Thu Aug 26 2010 Luis Daniel Lucio Quiroz <dlucio@mandriva.org> 2.3.0-5mdv2011.0
-+ Revision: 573411
-- P2 to let compile in 2.6.34+
-
-* Sat Jul 10 2010 Lonyai Gergely <aleph@mandriva.org> 2.3.0-4mdv2011.0
-+ Revision: 550236
-- release
-- Update the dahdi-linux to 2.3.0.1
-
-* Wed Apr 28 2010 Lonyai Gergely <aleph@mandriva.org> 2.3.0-3mdv2010.1
-+ Revision: 540119
-- Fix dkms.conf error
-  Purge unnecessary patchs
-- Fix the dkms.conf error
-
-* Thu Apr 15 2010 Lonyai Gergely <aleph@mandriva.org> 2.3.0-2mdv2010.1
-+ Revision: 535020
-- Remove the dahdy_dummy.ko related things.
-
-* Wed Apr 14 2010 Lonyai Gergely <aleph@mandriva.org> 2.3.0-1mdv2010.1
-+ Revision: 534702
-- 2.3.0
-
-* Mon Mar 29 2010 Lonyai Gergely <aleph@mandriva.org> 2.2.1.1-2mdv2010.1
-+ Revision: 528751
-- reuse dahdi-to-kernel-2-6-33.diff patch
-
-* Thu Mar 25 2010 Lonyai Gergely <aleph@mandriva.org> 2.2.1.1-1mdv2010.1
-+ Revision: 527342
-- 2.2.1.1
-  Drop temporary patch: dahdi-to-kernel-2-6-33.diff
-
-* Wed Mar 03 2010 Lonyai Gergely <aleph@mandriva.org> 2.2.1-4mdv2010.1
-+ Revision: 513897
-- More fix to kernel-2.6.33
-
-* Wed Mar 03 2010 Lonyai Gergely <aleph@mandriva.org> 2.2.1-3mdv2010.1
-+ Revision: 513826
-- Fix compile error on kernel-2.6.33
-
-* Tue Feb 02 2010 Lonyai Gergely <aleph@mandriva.org> 2.2.1-2mdv2010.1
-+ Revision: 499470
-- Fix the udev rules of xpp
-
-* Tue Jan 26 2010 Lonyai Gergely <aleph@mandriva.org> 2.2.1-1mdv2010.1
-+ Revision: 496769
-- 2.2.1
-
-* Wed Jan 06 2010 Lonyai Gergely <aleph@mandriva.org> 2.2.1-0.rc2.1mdv2010.1
-+ Revision: 486732
-- 2.2.1-rc2
-- revisioning the spec file
-
-* Thu Oct 15 2009 Lonyai Gergely <aleph@mandriva.org> 2.2.0-3mdv2010.0
-+ Revision: 457698
-- fix #53377 - dkms-dahdi cannot compile on kernel 2.6.31
-
-* Tue Sep 29 2009 Lonyai Gergely <aleph@mandriva.org> 2.2.0-2mdv2010.0
-+ Revision: 450805
-- release
-- dahdi-tools-2.2.0
-  dahdi-linux-2.2.0.2
-  fix udev rules syntax
-- disable selinux support
-
-* Wed Jul 15 2009 Lonyai Gergely <aleph@mandriva.org> 2.2.0-1mdv2010.0
-+ Revision: 396206
-- tools version: 2.2.0
- - kernel modules version: 2.2.0.1
-
-* Tue May 12 2009 Lonyai Gergely <aleph@mandriva.org> 2.1.0.2-3mdv2010.0
-+ Revision: 374912
-- fixing 'wctc4xxp vs. kernel-2.6.29' compile error
-
-* Wed Feb 04 2009 Stefan van der Eijk <stefan@mandriva.org> 2.1.0.2-2mdv2009.1
-+ Revision: 337280
-- linux_version 2.1.0.4
-
-* Tue Jan 06 2009 Stefan van der Eijk <stefan@mandriva.org> 2.1.0.2-1mdv2009.1
-+ Revision: 326167
-- tools_version 2.1.0.2, linux_version 2.1.0.3
-
-* Thu Dec 11 2008 Oden Eriksson <oeriksson@mandriva.com> 2.1.0-1mdv2009.1
-+ Revision: 312899
-- import dahdi
-
-
-* Thu Dec 11 2008 Oden Eriksson <oeriksson@mandriva.com> 2.1.0-1mdv2009.0
-- initial Mandriva release (replaces zaptel)
