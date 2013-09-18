@@ -1,0 +1,100 @@
+From: Jan Engelhardt <jengelh@inai.de>
+Date: 2012-06-25 03:08:51.214248775 +0200
+
+You are using NULL, therefore you need stdio.h. That is
+non-negotioable.
+
+---
+ xpp/oct612x/apilib/bt/octapi_bt0.c                                      |    1 +
+ xpp/oct612x/apilib/llman/octapi_llman.c                                 |    1 +
+ xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_conf_bridge.c   |    1 +
+ xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_events.c        |    1 +
+ xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_miscellaneous.c |    1 +
+ xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_playout_buf.c   |    1 +
+ xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_tsst.c          |    1 +
+ 7 files changed, 7 insertions(+)
+
+Index: dahdi-tools-2.6.1/xpp/oct612x/apilib/bt/octapi_bt0.c
+===================================================================
+--- dahdi-tools-2.6.1.orig/xpp/oct612x/apilib/bt/octapi_bt0.c
++++ dahdi-tools-2.6.1/xpp/oct612x/apilib/bt/octapi_bt0.c
+@@ -28,6 +28,7 @@ $Octasic_Release: OCT612xAPI-01.00-PR49
+ $Octasic_Revision: 18 $
+ 
+ \*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
++#include <stdio.h>
+ #include "apilib/octapi_bt0.h"
+ #include "octapi_bt0_private.h"
+ 
+Index: dahdi-tools-2.6.1/xpp/oct612x/apilib/llman/octapi_llman.c
+===================================================================
+--- dahdi-tools-2.6.1.orig/xpp/oct612x/apilib/llman/octapi_llman.c
++++ dahdi-tools-2.6.1/xpp/oct612x/apilib/llman/octapi_llman.c
+@@ -29,6 +29,7 @@ $Octasic_Release: OCT612xAPI-01.00-PR49
+ $Octasic_Revision: 22 $
+ 
+ \*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*/
++#include <stdio.h>
+ #include "octapi_llman_private.h"
+ #include "apilib/octapi_llman.h"
+ #include "apilib/octapi_largmath.h"
+Index: dahdi-tools-2.6.1/xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_conf_bridge.c
+===================================================================
+--- dahdi-tools-2.6.1.orig/xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_conf_bridge.c
++++ dahdi-tools-2.6.1/xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_conf_bridge.c
+@@ -34,6 +34,7 @@ $Octasic_Revision: 146 $
+ 
+ /*****************************  INCLUDE FILES  *******************************/
+ 
++#include <stdio.h>
+ #include "octdef.h"
+ 
+ #include "oct6100api/oct6100_defines.h"
+Index: dahdi-tools-2.6.1/xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_events.c
+===================================================================
+--- dahdi-tools-2.6.1.orig/xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_events.c
++++ dahdi-tools-2.6.1/xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_events.c
+@@ -31,6 +31,7 @@ $Octasic_Revision: 81 $
+ 
+ /*****************************  INCLUDE FILES  *******************************/
+ 
++#include <stdio.h>
+ #include "octdef.h"
+ 
+ #include "oct6100api/oct6100_defines.h"
+Index: dahdi-tools-2.6.1/xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_miscellaneous.c
+===================================================================
+--- dahdi-tools-2.6.1.orig/xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_miscellaneous.c
++++ dahdi-tools-2.6.1/xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_miscellaneous.c
+@@ -31,6 +31,7 @@ $Octasic_Revision: 35 $
+ 
+ /*****************************  INCLUDE FILES  *******************************/
+ 
++#include <stdio.h>
+ #include "octdef.h"
+ 
+ #include "oct6100api/oct6100_defines.h"
+Index: dahdi-tools-2.6.1/xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_playout_buf.c
+===================================================================
+--- dahdi-tools-2.6.1.orig/xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_playout_buf.c
++++ dahdi-tools-2.6.1/xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_playout_buf.c
+@@ -31,6 +31,7 @@ $Octasic_Revision: 109 $
+ 
+ /*****************************  INCLUDE FILES  *******************************/
+ 
++#include <stdio.h>
+ #include "octdef.h"
+ 
+ #include "oct6100api/oct6100_defines.h"
+Index: dahdi-tools-2.6.1/xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_tsst.c
+===================================================================
+--- dahdi-tools-2.6.1.orig/xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_tsst.c
++++ dahdi-tools-2.6.1/xpp/oct612x/octdeviceapi/oct6100api/oct6100_api/oct6100_tsst.c
+@@ -32,6 +32,7 @@ $Octasic_Revision: 39 $
+ 
+ /*****************************  INCLUDE FILES  *******************************/
+ 
++#include <stdio.h>
+ #include "octdef.h"
+ 
+ #include "oct6100api/oct6100_defines.h"
