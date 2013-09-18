@@ -38,6 +38,7 @@ Patch1:		dahdi-genudevrules-2.2.0.1.diff
 Patch2:		dahdi-gcc47.diff
 BuildRequires:	newt-devel
 BuildRequires:	pkgconfig(libusb-1.0)
+BuildRequires:	pkgconfig(libusb)
 BuildRequires:	ppp-devel
 BuildConflicts:	libtonezone-devel
 
