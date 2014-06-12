@@ -1,17 +1,4 @@
-removed_sources:
+---
+sources:
   dahdi-linux-2.6.1.tar.xz: 69d3e0a56cdea2ee4d933cfa3414d749df116fa0
   dahdi-tools-2.6.1.tar.gz: 742b869c52359785244510ebfad76a78182695a3
-sources:
-  dahdi-fw-hx8-2.06.tar.gz: 56c59081b1bd29c97f352b62c9667c409ca99f69
-  dahdi-fw-oct6114-032-1.05.01.tar.gz: b03907cd899e121f62d320591b28644c0b615c3c
-  dahdi-fw-oct6114-064-1.05.01.tar.gz: 2fb8e5f4f7aedb285ffa21632efd45af877eacd4
-  dahdi-fw-oct6114-128-1.05.01.tar.gz: bcf07434f4589d07d9b5f67f7b3a8fb115aa9229
-  dahdi-fw-oct6114-256-1.05.01.tar.gz: eeeba6e932dca8b7edc89cb84332d5a15b662637
-  dahdi-fw-tc400m-MR6.12.tar.gz: 9206abda4c9cf192e8cae7e707f2e4e65beb8f87
-  dahdi-fw-te133-6f0017.tar.gz: 42205a29fd6ee326b736ec96870e03220f695419
-  dahdi-fw-te134-6f0017.tar.gz: 746414aebc63a6e3dbd1c563dc38e87254fe2ba2
-  dahdi-fw-te820-1.76.tar.gz: 24b686fb287614cc3c1a87e7c64ba9bbf675e126
-  dahdi-fw-vpmoct032-1.12.0.tar.gz: 743a3356d5c3ba6dd5ad759550f598879049cd2e
-  dahdi-fwload-vpmadt032-1.25.0.tar.gz: 0615613f6179ef927d23ed23daeaf7a718490200
-  dahdi-linux-2.7.0.tar.gz: 8ca7f7642c8db85c7324004020a357d789b39e28
-  dahdi-tools-2.7.0.tar.gz: b8eb4547b922e27efa254ddd24becdf52d0bbdd3
