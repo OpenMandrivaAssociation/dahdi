@@ -15,7 +15,7 @@
 Summary:	Userspace tools and DAHDI kernel modules
 Name:		dahdi
 Version:	%{tools_version}
-Release:	3
+Release:	4
 Group:		System/Kernel and hardware
 License:	GPLv2+ and LGPLv2+
 Url:		http://www.asterisk.org/
