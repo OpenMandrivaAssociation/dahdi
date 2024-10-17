@@ -18,7 +18,7 @@ Version:	%{tools_version}
 Release:	10
 Group:		System/Kernel and hardware
 License:	GPLv2+ and LGPLv2+
-Url:		http://www.asterisk.org/
+Url:		https://www.asterisk.org/
 Source0:	http://downloads.asterisk.org/pub/telephony/dahdi-tools/releases/dahdi-tools-%{tools_version}.tar.gz
 # this is original tarball with stripped binary firmware
 Source1:	dahdi-linux-%{linux_version}.tar.xz
