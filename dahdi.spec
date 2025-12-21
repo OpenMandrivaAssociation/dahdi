@@ -26,6 +26,11 @@ Patch0:		dahdi-tools-mdv.diff
 Patch1:		dahdi-genudevrules-2.2.0.1.diff
 Patch2:		dahdi-2.6.1-rosa-null.patch
 Patch3:		dahdi-2.6.1-rosa-no_blobs.patch
+BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool-base
+BuildRequires:	slibtool
+BuildRequires:	make
 BuildRequires:	ppp-devel
 BuildRequires:	pkgconfig(libnewt)
 BuildRequires:	pkgconfig(libusb)
